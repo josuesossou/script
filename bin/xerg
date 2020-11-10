@@ -1,0 +1,81 @@
+#!/bin/bash
+
+create() {
+	# FOLDER_NAME=""
+	# COMMAND_TYPE=
+
+	if [ -z $1 ]
+	then 
+		echo "Enter a type of project to create or a folder name"
+		return
+	elif [ -z "$2" ]
+	then 
+		echo "Must Specify name of the project"
+		return
+	fi
+	
+	cd
+	python3 /Users/jspc/Documents/Scripts/create_project.py "$2" "$3"
+
+	case "$1" in
+		"react-app") echo "Creating react app in web_apps folder" 
+			cd ~/Documents/web_apps
+			npx create-react-app $2
+		;;
+		"flutter-app") echo "Creating flutter app in flutter-app folder" 
+			cd ~/Documents/"flutter apps"
+			flutter create $2
+		;;
+		*) echo "Creating a new project in $1 folder." 
+			cd ~/Documents/"$1"
+			mkdir $2
+		;;
+	esac
+
+
+	cd "$2"
+	git init
+	git remote add origin git@github.com:josuesossou/"$2".git
+	touch README.md
+	git add .
+	git commit -m "first commit"
+	git push -u origin master
+	code .
+}
+
+grace-connect() {
+	expect -c "
+		spawn ssh -Y jsossou@grace.umd.edu
+		expect \"password:\"
+		send \"ThankY0uJe&u&\r\"
+		expect -re \"grace*\"
+		interact
+	"
+}
+
+help() {
+	echo "Function: create"
+	echo "   Command: xerg create option1 option2 option3"
+	echo "   option1 [required]"
+	echo "   	react-app: creating a react app in the web-app folder"
+	echo "   	flutter-app: creating a flutter app in the flutter-app folder"
+	echo "	 option2 [required]"
+	echo "   	Name of the project"
+	echo "   option3 [optional]"
+	echo "   	Description of the project"
+	echo ""
+	echo "Function: grace-connect"
+	echo "	 Command: xerg grace-connect"
+	echo "		No option, connects you to umd grace computer"
+}
+
+# Check if the function exists (bash specific)
+if declare -f "$1" > /dev/null
+then
+  # call arguments verbatim
+  "$@"
+else
+  # Show a helpful error
+  echo "'$1' is not a known function name" >&2
+  exit 1
+fi

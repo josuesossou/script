@@ -1,0 +1,1 @@
+print("SyntaxError: invalid syntax")
